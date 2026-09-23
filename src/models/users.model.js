@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const UsersSchema = new mongoose.Schema({
-    username: {
+    userName: {
         type: String,
         unique: [true, "Username is already exists"],
         required: [true, "Username is required!!"]
@@ -20,5 +20,12 @@ const UsersSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, "password is required!!"]
-    }
+    } ,
+    bio:{
+        type:String,
+    },
 })
+
+const userModel = mongoose.model("userModel" , UsersSchema)
+
+module.exports = userModel
