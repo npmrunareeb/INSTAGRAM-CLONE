@@ -1,10 +1,10 @@
-
 const express = require("express")
 const userModel = require("../models/users.model")
 const authRouter = express.Router()
+const bcrypt = require("bcryptjs")
 const crypto = require("crypto")
 const jwt = require("jsonwebtoken")
-authRouter.post("/register", async (req, res) => {d
+authRouter.post("/register", async (req, res) => {
     const { userName, email, phoneNumber, profilePic, bio, password } = req.body
     const userAlreadyExits = await userModel.findOne({
         $or: [
@@ -18,7 +18,7 @@ authRouter.post("/register", async (req, res) => {d
         })
     }
 
-    const hash = crypto.createHash("sha256").update(password).digest("hex")
+    const hash = await bcrypt.hash(password,10)
 
     const user = await userModel.create({
         userName,
@@ -34,7 +34,7 @@ authRouter.post("/register", async (req, res) => {d
     }, process.env.JWT_SECRET, { expiresIn: "1d" })
     res.cookie("token", token)
 
-    res.status(409).json({
+    res.status(201).json({
         message: "user successfully registered!!",
         user: {
             email: user.email,
@@ -45,4 +45,56 @@ authRouter.post("/register", async (req, res) => {d
         }
     })
 })
-module.exports = authRouterdddddddd
+authRouter.post("/login", async (req,res)=>{
+  const {email,userName,password} = req.body
+ const user = await userModel.findOne({
+    $or: [
+        { email },
+        { userName }
+    ]
+})
+
+if(!user){
+  return  res.status(401).json({
+        message:"user not found!!"
+    })
+}
+
+const isPasswordValid = await bcrypt.compare(password,user.password)
+
+if(!isPasswordValid){
+    return res.status(401).json({
+        message:"Password is invalid please try again!!"
+    }) 
+}
+
+
+const token = jwt.sign(
+    {
+        id: user._id
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: "1d"
+    }
+)
+
+res.cookie("token", token)
+
+
+
+res.status(200).json({
+    message: "Login successful",
+    user: {
+        email: user.email,
+        username: user.userName,
+        bio: user.bio,
+        profilePic: user.profilePic,
+        phoneNumber: user.phoneNumber
+    }
+})
+
+
+
+})
+module.exports = authRouter
