@@ -13,10 +13,7 @@ async function createPost(req , res){
         file : await toFile(Buffer.from(req.file.buffer) , "file"),
         fileName : "Test"
     })
-    
-  
     res.send(file)
-
 }
 
 
