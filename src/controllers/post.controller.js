@@ -19,8 +19,7 @@ async function createPostControllerFunction(req, res) {
                 "file"
             ),
             fileName: "img"
-        })
-
+        }) 
         const post = await postModel.create({
             caption: req.body.caption,
             imgUrl: file.url,
