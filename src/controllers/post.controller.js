@@ -18,30 +18,37 @@ async function createPost(req, res) {
             message: "token not provided , Unauthorized access"
         })
     }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+let decoded = null
+    try{
+          decoded = jwt.verify(token, process.env.JWT_SECRET)
+    }catch(err){
+        res.status(401).json({
+            message:"unauthorised access!!"
+        })
+    }
     console.log(decoded)
 
     const file = await imagekit.files.upload({
         file: await toFile(Buffer.from(req.file.buffer), "file"),
-        fileName: "img"
+        fileName: "img",
+        folder:"insta-clone"
     })
     res.send(file)
-console.log("IMAGEKIT RESPONSE:");
-console.log(file);
-console.log("IMAGE URL:");
-console.log(file.url);
+    console.log("IMAGEKIT RESPONSE:");
+    console.log(file);
+    console.log("IMAGE URL:");
+    console.log(file.url);
     console.log(req.body)
-   
 
-  const post = await postModel.create({
-    caption: req.body.caption,
-    imgUrl: file.url,
-    user: decoded.id
-});
+
+    const post = await postModel.create({
+        caption: req.body.caption,
+        imgUrl: file.url,
+        user: decoded.id
+    });
     res.status(201).json({
-        message:"Post Created successfully!",
-        post 
+        message: "Post Created successfully!",
+        post
     })
 }
 
