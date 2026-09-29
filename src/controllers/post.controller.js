@@ -27,16 +27,18 @@ async function createPost(req, res) {
         fileName: "img"
     })
     res.send(file)
-
-    console.log("FILE:", req.file);
+console.log("IMAGEKIT RESPONSE:");
+console.log(file);
+console.log("IMAGE URL:");
+console.log(file.url);
     console.log(req.body)
    
 
-    const post = await postModel.create({
-        caption:req.body.caption,
-        imgUrl:req.body.imgUrl,
-        user:req.body
-    })
+  const post = await postModel.create({
+    caption: req.body.caption,
+    imgUrl: file.url,
+    user: decoded.id
+});
     res.status(201).json({
         message:"Post Created successfully!",
         post 
