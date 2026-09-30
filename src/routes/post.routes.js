@@ -8,7 +8,7 @@ const postController = require("../controllers/post.controller")
 
 postRouter.post('/', upload.single("img") , postController.createPost)
  postRouter.get('/',postController.getPosts)
-
+postRouter.get('/details/:postId',postController.getPostDetails)
 
 
 module.exports = postRouter
