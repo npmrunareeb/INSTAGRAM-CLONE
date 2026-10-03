@@ -26,7 +26,6 @@ async function createPost(req, res) {
             message: "unauthorised access!!"
         })
     }
-
     const file = await imagekit.files.upload({
         file: await toFile(
             Buffer.from(req.file.buffer),
@@ -65,6 +64,9 @@ async function getPosts(req, res) {
         user: userId
     })
 
+
+
+
     res.status(200).json({
         message: "post fetched successfully",
         posts
@@ -97,7 +99,7 @@ async function getPostDetails(req, res) {
             message: "post not found"
         })
     }
-    const isValidUser = post.user.toString() == userId
+    const isValidUser = post.user.toString() == userId 
 
     if (!isValidUser) {
         return res.status(403).json({
